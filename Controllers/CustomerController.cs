@@ -49,12 +49,12 @@ public sealed class CustomerController(ICustomerService service) : ControllerBas
             {
                 return Problem(
                     statusCode: StatusCodes.Status409Conflict,
-                    title: "Customer code has already exist"
+                    title: "Gagal membuat data. Email atau nomor telepon mungkin sudah terdaftar!"
                 );
             }
             return CreatedAtAction(
                 nameof(GetById),
-                new { customerId =  created.Id },
+                new { id =  created.Id },
                 created
             );
         }

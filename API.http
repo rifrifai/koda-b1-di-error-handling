@@ -1,19 +1,18 @@
-@urlBase = http://localhost:5074/api/v1/customer
+@urlBase = http://localhost:5074/api/v1/product
 
 ###
 GET {{urlBase}}
 
 ###
-GET {{urlBase}}/8
+GET {{urlBase}}/PR02
 
 ###
 POST {{urlBase}}
 Content-Type: application/json
 
 {
-    "CustomerId": 8,
-    "Name": "Joko",
-    "Email": "joko@mail.com",
+    "Name": "Pascabowo",
+    "Email": "pascabowo@mail.com",
     "Phone": "62888994033",
     "Address": "jl. acropolis cibubur kab. bogor"
 }
@@ -31,3 +30,15 @@ Content-Type: application/json
 
 ###
 DELETE  {{urlBase}}/pr01
+
+### Upload Gambar
+POST http://localhost:5074/api/v1/product/PR02/image
+Content-Type: multipart/form-data; boundary=KodaStore
+
+--KodaStore
+Content-Disposition: form-data; name="file"; filename="valid_product.jpg"
+Content-Type: image/jpeg
+
+< /home/rifdev/Documents/valid_product.jpeg
+
+--KodaStore--

@@ -99,18 +99,28 @@ public class CustomerRepository(IConfiguration config) : ICustomerRepository
 	public async Task<bool> TryAddAsync(Customer customer, CancellationToken ct)
 	{
 		const string sql = """
-			INSERT INTO dbo.Customer(CustomerId, Name, Email, Phone, Address)VALUES(@customerId, @name, @email, @phone, @address);
+			INSERT INTO dbo.Customer(Name, Email, Phone, Address)OUTPUT INSERTED.CustomerId VALUES(@name, @email, @phone, @address);
 		""";
 
 		await using var conn = new SqlConnection(_connString);
 		await conn.OpenAsync(ct);
 		await using var command = new SqlCommand(sql, conn);
-		AddCustomerParameter(command, customer);
 
+		command.Parameters.Add("@name", SqlDbType.NVarChar, 120).Value = customer.Name;
+		command.Parameters.Add("@email", SqlDbType.NVarChar, 50).Value = customer.Email;
+		command.Parameters.Add("@phone", SqlDbType.NVarChar, 50).Value = customer.Phone;
+		command.Parameters.Add("@address", SqlDbType.NVarChar, 80).Value = customer.Address;
+		
 		try
 		{
-			var affectedRows = await command.ExecuteNonQueryAsync(ct);
-			return affectedRows == 1;
+			var insertedId = await command.ExecuteScalarAsync(ct);
+
+			if (insertedId != null)
+			{
+				customer.Id = (int)insertedId;
+				return true;
+			}
+			return false;
 		}
 		catch (SqlException e) when(e.Number is 2601 or 2627)
 		{

@@ -79,10 +79,6 @@ public class SqlProductRepository(IConfiguration configuration) : IProductReposi
 		catch (SqlException e) when(e.Number is 2601 or 2627)
 		{
 			return false;
-		}catch (SqlException e)
-		{
-			Console.WriteLine($"SQL error tidak terduga: {e.Number} - {e.Message}");
-			return false;
 		}
 	}
 
